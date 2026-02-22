@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --animate-slide-in: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Theme CSS Custom Properties === */
+.theme-midnight {
+  --slide-bg: #0f172a;
+  --slide-text-main: #ffffff;
+  --slide-text-sub: #94a3b8;
+  --slide-accent: #6366f1;
+  --slide-accent-sub: #818cf8;
+  --slide-card-bg: rgba(30, 41, 59, 0.5);
+  --slide-border: #334155;
+}
+
+.theme-corporate {
+  --slide-bg: #f8fafc;
+  --slide-text-main: #0f172a;
+  --slide-text-sub: #475569;
+  --slide-accent: #0284c7;
+  --slide-accent-sub: #0369a1;
+  --slide-card-bg: #ffffff;
+  --slide-border: #e2e8f0;
+}
+
+.theme-neon {
+  --slide-bg: #09090b;
+  --slide-text-main: #ffffff;
+  --slide-text-sub: #a1a1aa;
+  --slide-accent: #ec4899;
+  --slide-accent-sub: #22d3ee;
+  --slide-card-bg: rgba(24, 24, 27, 0.8);
+  --slide-border: #ec4899;
+}
+
+/* === Editable Text Styles === */
+.editable-text:hover {
+  outline: 2px dashed var(--slide-accent-sub);
+  outline-offset: 8px;
+  border-radius: 4px;
+  cursor: text;
+}
+
+.editable-text:focus {
+  outline: 3px solid var(--slide-accent) !important;
+  outline-offset: 8px;
+  border-radius: 4px;
+  cursor: text;
+  background: rgba(0, 0, 0, 0.2);
+}
