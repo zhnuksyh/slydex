@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import {
   Loader2,
   Play,
@@ -16,6 +16,8 @@ import {
   MonitorPlay,
   Download,
   Image as ImageIcon,
+  Upload,
+  Paperclip,
 } from 'lucide-react';
 
 import type { Slide, SlideData, SlideType } from './types';
@@ -30,6 +32,9 @@ export default function App() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState('');
+  const [attachedFiles, setAttachedFiles] = useState<string[]>([]);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [showInfo, setShowInfo] = useState(false);
   const [theme, setTheme] = useState('midnight');
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -160,6 +165,82 @@ export default function App() {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  // --- File Input Handlers ---
+  const SUPPORTED_EXTENSIONS = ['.txt', '.md', '.csv', '.json', '.html', '.xml', '.rtf', '.log'];
+
+  const readFileAsText = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(new Error(`Failed to read ${file.name}`));
+      reader.readAsText(file);
+    });
+  };
+
+  const processFiles = useCallback(async (files: FileList | File[]) => {
+    const fileArray = Array.from(files);
+    const validFiles = fileArray.filter((f) => {
+      const ext = '.' + f.name.split('.').pop()?.toLowerCase();
+      return SUPPORTED_EXTENSIONS.includes(ext);
+    });
+
+    if (validFiles.length === 0) {
+      setError('Unsupported file type. Supported: ' + SUPPORTED_EXTENSIONS.join(', '));
+      return;
+    }
+
+    try {
+      const contents = await Promise.all(validFiles.map(readFileAsText));
+      const combined = contents.join('\n\n---\n\n');
+      setInputText((prev) => (prev ? prev + '\n\n---\n\n' + combined : combined));
+      setAttachedFiles((prev) => [...prev, ...validFiles.map((f) => f.name)]);
+      setError('');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to read files.');
+    }
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+    if (e.dataTransfer.files.length > 0) {
+      processFiles(e.dataTransfer.files);
+    }
+  }, [processFiles]);
+
+  const handlePaste = useCallback((e: React.ClipboardEvent) => {
+    const files = e.clipboardData?.files;
+    if (files && files.length > 0) {
+      e.preventDefault();
+      processFiles(files);
+    }
+    // If no files, let the default paste behavior handle text
+  }, [processFiles]);
+
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      processFiles(e.target.files);
+      e.target.value = ''; // Reset so same file can be re-selected
+    }
+  }, [processFiles]);
+
+  const removeAttachedFile = (index: number) => {
+    setAttachedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   // --- Slide Management Handlers ---
@@ -402,16 +483,73 @@ export default function App() {
             <Plus size={16} className="text-indigo-500" /> Content to Slides
           </h2>
         </div>
-        <div className="flex-1 p-6 flex flex-col gap-4">
+        <div
+          className="flex-1 p-6 flex flex-col gap-4"
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
           <p className="text-xs text-slate-400">
-            Paste your raw text below. Ask for an image slide explicitly if you want pictures!
+            Type, paste, drag & drop, or upload a file (.txt, .md, .csv, .json, etc.)
           </p>
-          <textarea
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            placeholder="e.g. Slide 1: Welcome. Slide 2: An image of a futuristic server room. Slide 3: Our features table..."
-            className="flex-1 bg-neutral-950 border border-neutral-700 rounded-xl p-4 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+
+          {/* Drop zone overlay */}
+          <div className="relative flex-1 flex flex-col">
+            {isDragOver && (
+              <div className="absolute inset-0 z-10 bg-indigo-600/20 border-2 border-dashed border-indigo-400 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                <div className="text-center">
+                  <Upload size={32} className="mx-auto mb-2 text-indigo-400" />
+                  <p className="text-indigo-300 font-semibold text-sm">Drop files here</p>
+                </div>
+              </div>
+            )}
+
+            <textarea
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              onPaste={handlePaste}
+              placeholder="e.g. Slide 1: Welcome. Slide 2: An image of a futuristic server room. Slide 3: Our features table..."
+              className="flex-1 bg-neutral-950 border border-neutral-700 rounded-xl p-4 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+            />
+          </div>
+
+          {/* Attached files chips */}
+          {attachedFiles.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {attachedFiles.map((name, i) => (
+                <span
+                  key={i}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 text-xs font-medium"
+                >
+                  <Paperclip size={12} />
+                  <span className="max-w-[120px] truncate">{name}</span>
+                  <button
+                    onClick={() => removeAttachedFile(i)}
+                    className="hover:text-white transition-colors ml-0.5"
+                  >
+                    <X size={12} />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* File picker button */}
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border border-dashed border-neutral-700 hover:border-indigo-500 text-slate-400 hover:text-indigo-400 transition-colors text-xs font-medium"
+          >
+            <Upload size={14} /> Upload File
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept=".txt,.md,.csv,.json,.html,.xml,.rtf,.log"
+            onChange={handleFileSelect}
+            className="hidden"
           />
+
           {error && (
             <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
               {error}
