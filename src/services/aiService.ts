@@ -1,7 +1,7 @@
 import type { Slide } from '../types';
 
 export const generateSlidesFromAI = async (inputText: string): Promise<Slide[]> => {
-    const apiKey = ""; // API key is provided by the execution environment
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
     const systemInstruction = `
