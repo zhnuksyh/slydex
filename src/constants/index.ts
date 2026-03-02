@@ -138,7 +138,7 @@ export const TEMPLATE_GUIDE: {
                 type: 'end',
                 data: {
                     title: 'Thank You',
-                    subtitle: 'Questions? Contact hello@slideai.com',
+                    subtitle: 'Questions? Contact hello@slydex.app',
                 },
             },
         },
