@@ -12,13 +12,13 @@ export const MainSlide = ({ data, updateData }: SlideProps) => (
       tag="h1"
       text={data.title}
       onChange={(val: string) => updateData({ title: val })}
-      className="text-8xl font-bold text-[var(--slide-text-main)] mb-12 tracking-tight leading-tight drop-shadow-lg"
+      className="text-8xl font-bold text-[var(--slide-text-main)] mb-12 tracking-tight leading-tight drop-shadow-lg line-clamp-3"
     />
     <EditableText
       tag="p"
       text={data.subtitle}
       onChange={(val: string) => updateData({ subtitle: val })}
-      className="text-5xl text-[var(--slide-accent-sub)] font-light max-w-6xl drop-shadow-md"
+      className="text-5xl text-[var(--slide-accent-sub)] font-light max-w-6xl drop-shadow-md line-clamp-3"
     />
   </div>
 );

@@ -35,12 +35,12 @@ export const TableSlide = ({ data, updateData }: SlideProps) => {
           <thead>
             <tr style={{ backgroundColor: 'var(--slide-accent)', color: '#ffffff' }}>
               {(data.headers || []).map((header, index) => (
-                <th key={index} className="px-10 py-6">
+                <th key={index} className="px-10 py-6 w-1/4 max-w-[25%] truncate">
                   <EditableText
                     tag="span"
                     text={header}
                     onChange={(val: string) => handleHeaderChange(index, val)}
-                    className="text-2xl font-bold"
+                    className="text-2xl font-bold block truncate"
                   />
                 </th>
               ))}
@@ -57,12 +57,12 @@ export const TableSlide = ({ data, updateData }: SlideProps) => {
                 }}
               >
                 {row.map((cell, colIndex) => (
-                  <td key={colIndex} className="px-10 py-6">
+                  <td key={colIndex} className="px-10 py-6 max-w-[25%]">
                     <EditableText
                       tag="span"
                       text={cell}
                       onChange={(val: string) => handleCellChange(rowIndex, colIndex, val)}
-                      className="text-2xl text-[var(--slide-text-main)]"
+                      className="text-2xl text-[var(--slide-text-main)] block truncate"
                     />
                   </td>
                 ))}

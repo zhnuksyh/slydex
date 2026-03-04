@@ -25,7 +25,7 @@ export const SecondaryPointSlide = ({ data, updateData }: SlideProps) => {
         {(data.items || []).map((item, index) => (
           <div
             key={index}
-            className="rounded-2xl p-10 border transition-colors"
+            className="rounded-2xl p-10 border transition-colors flex flex-col overflow-hidden"
             style={{
               backgroundColor: 'var(--slide-card-bg)',
               borderColor: 'var(--slide-border)',
@@ -37,12 +37,14 @@ export const SecondaryPointSlide = ({ data, updateData }: SlideProps) => {
             >
               {String(index + 1).padStart(2, '0')}
             </span>
-            <EditableText
-              tag="span"
-              text={item}
-              onChange={(val: string) => handleItemChange(index, val)}
-              className="text-3xl font-medium text-[var(--slide-text-main)] leading-snug"
-            />
+            <div className="overflow-hidden flex-1">
+              <EditableText
+                tag="span"
+                text={item}
+                onChange={(val: string) => handleItemChange(index, val)}
+                className="text-3xl font-medium text-[var(--slide-text-main)] leading-snug line-clamp-4"
+              />
+            </div>
           </div>
         ))}
       </div>
