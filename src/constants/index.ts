@@ -22,7 +22,7 @@ export const DEFAULT_SLIDES: Slide[] = [
         data: {
             title: 'A New Perspective',
             imageUrl:
-                'https://image.pollinations.ai/prompt/abstract-geometric-shapes-glowing-blue-and-purple-dark-background?width=1920&height=1080&nologo=true',
+                'https://pollinations.ai/p/abstract-geometric-shapes-glowing-blue-and-purple-dark-background?width=1920&height=1080&nologo=true',
             notes: 'Mention how visualizing data opens up new opportunities.',
         },
     },
@@ -125,7 +125,7 @@ export const TEMPLATE_GUIDE: {
                 data: {
                     title: 'Visual Expansion',
                     imageUrl:
-                        'https://image.pollinations.ai/prompt/vibrant-sunset-over-futuristic-city?width=1920&height=1080&nologo=true',
+                        'https://pollinations.ai/p/vibrant-sunset-over-futuristic-city?width=1920&height=1080&nologo=true',
                 },
             },
         },
