@@ -39,6 +39,9 @@ export const generateSlidesFromAI = async (inputText: string): Promise<Slide[]> 
       {"type":"table","title":"Q3 Metrics at a Glance","headers":["Metric","Q2 Baseline","Q3 Result","Change"],"rows":[["Revenue Growth","Baseline","30% increase","+30%"],["Churn Rate","4.5%","2.0%","-2.5pp"],["New Customers","310","500","+61%"]]},
       {"type":"end","title":"Looking Ahead to Q4","subtitle":"Building on momentum — targeting 40% revenue growth and EMEA expansion"}
     ]
+
+    SPEAKER NOTES:
+    For EVERY slide, include a "notes" field with 1-2 sentences of speaker talking points. These should help the presenter know what to say, not just repeat the slide content.
   `;
 
     const schema = {
@@ -59,6 +62,7 @@ export const generateSlidesFromAI = async (inputText: string): Promise<Slide[]> 
                         headers: { type: "ARRAY", items: { type: "STRING" } },
                         rows: { type: "ARRAY", items: { type: "ARRAY", items: { type: "STRING" } } },
                         imageUrl: { type: "STRING" },
+                        notes: { type: "STRING" },
                     },
                     required: ["type", "title"],
                 },
