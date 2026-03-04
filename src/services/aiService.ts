@@ -45,11 +45,11 @@ export const generateSlidesFromAI = async (inputText: string): Promise<Slide[]> 
 
     CONTENT QUALITY RULES:
     - Generate at least 5 slides, even for short inputs. Expand on the topic if needed.
-    - Subtitles must be full, descriptive sentences — never just one or two words.
-    - Bullet point items must be descriptive phrases of at least 8 words, not single words or short fragments.
-    - Table cells should contain real, specific data — never use placeholders like "TBD" or "N/A".
-    - Every slide must look complete and professional — no empty or nearly empty slides.
-    - Write in a clear, confident, professional tone suitable for business presentations.
+    - Subtitles MUST BE CONCISE: maximum 10-20 words (1 sentence max).
+    - Bullet point items MUST BE CONCISE: maximum 10-15 words each. Do not write long paragraphs.
+    - Table cells MUST BE EXTREMELY BRIEF: maximum 3-5 words per cell.
+    - Move all verbose explanations and profound details EXACTLY into the "notes" field! The slide itself is just a visual aid.
+    - Every slide must look professional, clean, and never crowded.
   `;
 
     const schema = {
@@ -146,6 +146,7 @@ export const generateSlidesFromAI = async (inputText: string): Promise<Slide[]> 
                         Array.isArray(row) ? row.map(String) : []
                     )
                     : undefined,
+                notes: s.notes ? String(s.notes) : undefined,
             },
         }));
     }
