@@ -1,4 +1,5 @@
 import type { Slide } from '../types';
+import { getApiUsageStatus, recordApiCall } from '../utils/apiTracker';
 
 export const generateSlidesFromAI = async (inputText: string): Promise<Slide[]> => {
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -87,6 +88,11 @@ export const generateSlidesFromAI = async (inputText: string): Promise<Slide[]> 
         },
     };
 
+    const usage = getApiUsageStatus();
+    if (usage.isRateLimited) {
+        throw new Error(`API Rate Limit Exceeded. You have used ${usage.usedLastMinute}/${usage.maxRpm} requests this minute, or ${usage.usedToday}/${usage.maxDaily} today.`);
+    }
+
     const MAX_RETRIES = 3;
     let delay = 2000;
 
@@ -131,6 +137,9 @@ export const generateSlidesFromAI = async (inputText: string): Promise<Slide[]> 
         if (!textResponse) throw new Error('Empty response from AI. Try rephrasing your input.');
 
         const parsed = JSON.parse(textResponse);
+
+        // Record successful call
+        recordApiCall();
 
         return parsed.slides.map((s: Record<string, unknown>) => ({
             id: Math.random().toString(36).substring(7),

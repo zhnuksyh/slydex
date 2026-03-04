@@ -24,6 +24,7 @@ import type { Slide, SlideData, SlideType } from './types';
 import { THEMES, DEFAULT_SLIDES, TEMPLATE_GUIDE } from './constants';
 import { generateSlidesFromAI } from './services/aiService';
 import { SlideRenderer } from './components/SlideRenderer';
+import { ApiUsageMonitor } from './components/ui/ApiUsageMonitor';
 
 export default function App() {
   const [slides, setSlides] = useState<Slide[]>(DEFAULT_SLIDES);
@@ -374,6 +375,8 @@ export default function App() {
             <Info size={16} className="text-indigo-400" /> Template Guide
           </button>
         </div>
+
+        <ApiUsageMonitor />
       </div>
 
       {/* Center Column */}
