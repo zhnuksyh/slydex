@@ -14,7 +14,16 @@ export const generateSlidesFromAI = async (inputText: string): Promise<Slide[]> 
     You MUST output valid JSON matching this schema. 
     Choose the best slide template for each piece of content.
     Available slide types: "main", "toc", "main_point", "secondary_point", "table", "image", "end".
-    
+
+    REQUIRED FIELDS PER SLIDE TYPE (you MUST populate these — never leave them empty):
+    - "main": title + subtitle (subtitle = a tagline, theme, or contextual phrase)
+    - "toc": title + items (an array of 4-8 agenda topics or section names)
+    - "main_point": title + subtitle (title = the bold claim; subtitle = a full sentence of supporting detail)
+    - "secondary_point": title + items (an array of 3-6 descriptive bullet points, each 8+ words)
+    - "table": title + headers (array of column names) + rows (array of arrays, at least 2 data rows with real values)
+    - "image": title + imageUrl (constructed using the Pollinations format below)
+    - "end": title + subtitle (subtitle = a call-to-action, contact info, or closing remark)
+
     CRITICAL INSTRUCTION FOR "image" SLIDES:
     If you use the "image" slide type, you MUST provide an 'imageUrl' property. Construct the URL dynamically using this exact format:
     https://image.pollinations.ai/prompt/{detailed-visual-description}?width=1920&height=1080&nologo=true
